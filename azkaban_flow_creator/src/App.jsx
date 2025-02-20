@@ -45,24 +45,83 @@ export default function App() {
     [setEdges],
   );
   
-  const addNode = () => {
-    const lastNode = nodes[nodes.length - 1];
-    const newNode = {
-      id: `${nodeId}`,
-      position: { x: 300, y: lastNode.position.y + 100 },
-      data: { 
-        label: `Job ${nodeId}`, 
-        type: '', 
-        workingDir: '', 
-        command: '', 
-        dependencies: [lastNode.data.label] 
+  const addNode = (type) => {
+    if (type === "LDG" || type === "BRE") {
+      const tableName = prompt("Enter the table name:");
+      if (!tableName) return;
+  
+      if (type === "LDG") {
+        const lastNode = nodes.length ? nodes[nodes.length - 1] : null;
+        
+        const dtNode = {
+          id: `${nodeId}`,
+          position: { x: 300, y: lastNode ? lastNode.position.y + 100 : 100 },
+          data: {
+            label: `${tableName}_DT`,
+            type: "command",
+            workingDir: "/usr/lib/ZDH/hub/spark_engine/",
+            command: `python3 /usr/lib/ZDH/hub/spark_engine/ZDHDataTransferExecutor.py BI_LatAm ${tableName}`,
+            retries: 5,
+            dependencies: lastNode ? [lastNode.data.label] : []
+          }
+        };
+  
+        const laNode = {
+          id: `${nodeId + 1}`,
+          position: { x: 500, y: dtNode.position.y + 100 },
+          data: {
+            label: `${tableName}_LA`,
+            type: "command",
+            workingDir: "/usr/lib/ZDH/hub/spark_engine/",
+            command: `python3 /usr/lib/ZDH/hub/spark_engine/ZDHLandingExecutor.py BI_LatAm ${tableName}`,
+            retries: 5,
+            dependencies: [dtNode.data.label]
+          }
+        };
+  
+        setNodes((nds) => [...nds, dtNode, laNode]);
+        setEdges((eds) => [
+          ...eds, 
+          { id: `e${dtNode.id}-${laNode.id}`, source: dtNode.id, target: laNode.id }
+        ]);
+        setNodeId((id) => id + 2);
+      } else if (type === "BRE") {
+        const lastNode = nodes.length ? nodes[nodes.length - 1] : null;
+        const breNode = {
+          id: `${nodeId}`,
+          position: { x: 300, y: lastNode ? lastNode.position.y + 100 : 100 },
+          data: {
+            label: `${tableName}_BRE`,
+            type: "command",
+            workingDir: "/usr/lib/ZDH/hub/spark_engine/",
+            command: `python3 /usr/lib/ZDH/hub/spark_engine/BREExecutor.py BI_LatAm ${tableName}`,
+            retries: 5,
+            dependencies: lastNode ? [lastNode.data.label] : []
+          }
+        };
+  
+        setNodes((nds) => [...nds, breNode]);
+        setNodeId((id) => id + 1);
       }
-    };
-    
-    setNodes((nds) => [...nds, newNode]);
-    setEdges((eds) => [...eds, { id: `e${lastNode.id}-${nodeId}`, source: lastNode.id, target: `${nodeId}` }]);
-    setNodeId((id) => id + 1);
+    } else {
+      const lastNode = nodes.length ? nodes[nodes.length - 1] : null;
+      const newNode = {
+        id: `${nodeId}`,
+        position: { x: 300, y: lastNode ? lastNode.position.y + 100 : 100 },
+        data: {
+          label: `Job ${nodeId}`,
+          type: "",
+          workingDir: "",
+          command: "",
+          dependencies: lastNode ? [lastNode.data.label] : []
+        }
+      };
+  
+      setNodes((nds) => [...nds, newNode]);
+      setNodeId((id) => id + 1);
+    }
   };
+  
 
   const onNodeClick = (event, node) => {
     setSelectedNode(node);
@@ -96,10 +155,10 @@ export default function App() {
       <h1 className="title">Azkaban Flow Designer</h1>
     </header>
     <div className='main'>
-      <div className= 'add-buttons-section'>
-        <button onClick={addNode} className='add-button'>Add LDG</button>
-        <button onClick={addNode} className='add-button'>Add BRE</button>
-        <button onClick={addNode} className='add-button'>Add Custom</button>
+      <div className="add-buttons-section">
+        <button onClick={() => addNode("LDG")} className="add-button">Add LDG</button>
+        <button onClick={() => addNode("BRE")} className="add-button">Add BRE</button>
+        <button onClick={() => addNode("Custom")} className="add-button">Add Custom</button>
       </div>
       <div className='flow-map' >
         <ReactFlow
