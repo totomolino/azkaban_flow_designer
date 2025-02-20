@@ -1,29 +1,20 @@
 import axios from 'axios';
 
-const baseURL = `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_AZKABAN_PORT}`;
+const proxyURL = 'http://localhost:4000/api'; // Proxy server URL
 
 export async function authenticate() {
     const username = window.prompt("Enter your Azkaban username:");
     const password = window.prompt("Enter your Azkaban password:");
 
-    console.log(baseURL);
-    
     if (!username || !password) {
         console.error("Authentication cancelled or invalid input.");
         return null;
     }
 
     try {
-        const response = await axios.post(`${baseURL}/`, new URLSearchParams({
-            action: 'login',
+        const response = await axios.post(`${proxyURL}/authenticate`, {
             username,
             password
-        }), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded', // Set the correct content type,
-                'Access-Control-Allow-Origin': "*"
-            },
-            validateStatus: false
         });
 
         if (response.status === 200 && response.data['session.id']) {
@@ -39,14 +30,12 @@ export async function authenticate() {
     }
 }
 
-
 export async function createProject(sessionId, projectName) {
     try {
-        const response = await axios.post(`${baseURL}/manager?action=create`, new URLSearchParams({
-            'session.id': sessionId,
-            name: projectName,
-            description: `Project ${projectName}`
-        }), { validateStatus: false });
+        const response = await axios.post(`${proxyURL}/createProject`, {
+            sessionId,
+            projectName
+        });
 
         if (response.status === 200 && response.data.toLowerCase().includes("success")) {
             console.log(`Project ${projectName} created successfully.`);
@@ -62,14 +51,13 @@ export async function createProject(sessionId, projectName) {
 }
 
 export async function uploadZip(sessionId, projectName, zipFile) {
-    try {
-        const formData = new FormData();
-        formData.append('session.id', sessionId);
-        formData.append('project', projectName);
-        formData.append('ajax', 'upload');
-        formData.append('file', zipFile, `${projectName}.zip`);
+    const formData = new FormData();
+    formData.append('sessionId', sessionId);
+    formData.append('projectName', projectName);
+    formData.append('zipFile', zipFile);
 
-        const response = await axios.post(`${baseURL}/manager`, formData, {
+    try {
+        const response = await axios.post(`${proxyURL}/uploadZip`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             validateStatus: false
         });

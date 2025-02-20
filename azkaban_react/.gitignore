@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/azkaban_proxy/node_modules/*
 /.pnp
 .pnp.js
 
