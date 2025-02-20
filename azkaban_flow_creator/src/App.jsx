@@ -16,7 +16,7 @@ import './index.css'
 
 const project_name = 'test_project'
 const initialNodes = [
-  { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${test_project}`, type: '', workingDir: '', command: '', dependencies: [] } },
+  { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${project_name}`, type: '', workingDir: '', command: '', dependencies: [] } },
 ];
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
  
