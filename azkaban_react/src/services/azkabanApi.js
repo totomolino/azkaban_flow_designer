@@ -18,7 +18,12 @@ export async function authenticate() {
             action: 'login',
             username,
             password
-        }), { validateStatus: false });
+        }), {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded' // Set the correct content type
+            },
+            validateStatus: false
+        });
 
         if (response.status === 200 && response.data['session.id']) {
             console.log("Authentication successful.");
