@@ -37,7 +37,7 @@ export async function createProject(sessionId, projectName) {
             projectName
         });
 
-        if (response.status === 200 && response.status === "success") {
+        if (response.status === 200 && response.data.status === "success") {
             console.log(`Project ${projectName} created successfully.`);
             return true;
         } else {
