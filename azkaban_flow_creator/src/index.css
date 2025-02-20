@@ -25,17 +25,16 @@
 }
 
 .flow-map{
-    width: 80vw;
+    width: 60vw;
     height: 80vh;
     border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
 }
+
 .main{
     position: fixed;
     display: flex;
-    align-items: center; 
-    justify-content: center;
     bottom: 2vh;
     left: 50%;
     transform: translateX(-50%);
@@ -45,7 +44,8 @@
 .add-buttons-section{
     display: flex;
     flex-direction: column;
-    padding: 10px
+    padding: 10px;
+    width: 10vw;
 }
 
 .edit-section{
@@ -53,6 +53,7 @@
     flex-direction: column;
     padding: 10px;
     align-self: stretch;
+    justify-content: space-between;
 }
 
 .node-popup{
@@ -77,3 +78,8 @@
     font-size: 16px;
 }
 
+.popup-button{
+    margin-top: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+}

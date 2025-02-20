@@ -122,7 +122,7 @@ export default function App() {
             <label>Working Directory: <input type="text" value={selectedNode.data.workingDir} onChange={(e) => handleInputChange('workingDir', e.target.value)} /></label><br />
             <label>Command: <input type="text" value={selectedNode.data.command} onChange={(e) => handleInputChange('command', e.target.value)} /></label><br />
             <p><strong>Dependencies:</strong> {selectedNode.data.dependencies.join(', ')}</p>
-            <button onClick={closePopup} style={{ marginTop: '10px', padding: '5px 10px', fontSize: '14px' }}>Close</button>
+            <button onClick={closePopup} className='popup-button'>Close</button>
           </div>
         )}
         <button onClick={generateZip} className='download-button' >Generate ZIP</button>
