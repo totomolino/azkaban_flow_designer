@@ -57,7 +57,7 @@
 }
 
 .node-popup{
-    padding: 20px;
+    padding: 15px;
 }
 
 .add-button {
@@ -85,8 +85,7 @@
 
 .node-input{
     width: 100%;
-    height: fit-content;
     overflow: hidden !important;
-    text-wrap: wrap;
+    word-wrap: break-word;
     resize: vertical;
 }

@@ -13,18 +13,48 @@ import { saveAs } from 'file-saver';
  
 import '@xyflow/react/dist/style.css';
 import './index.css'
+import { authenticate, createProject, uploadZip } from './services/azkabanApi';
+import { generateZipAzkaban, generateZip } from './services/zipUtils';
 
-const project_name = 'test_project'
-const initialNodes = [
-  { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${project_name}`, type: 'noop', workingDir: '', command: '', retries: '', dependencies: [] } },
-];
-const initialEdges = [];
+
+
  
 export default function App() {
+  const [projectName, setProjectName] = useState('test_project');
+
+  const initialNodes = [
+    { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${projectName}`, type: 'noop', workingDir: '', command: '', retries: '', dependencies: [] } },
+  ];
+  const initialEdges = [];
+
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [nodeId, setNodeId] = useState(3);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleProjectCreate = async () => {
+    setIsUploading(true);
+
+    const sessionId = await authenticate();
+    if (!sessionId) {
+        setIsUploading(false);
+        return;
+    }
+
+    const projectCreated = await createProject(sessionId, projectName);
+    if (projectCreated) {
+        const zipBlob = await generateZipAzkaban(nodes);
+
+        // Convert Blob to File object
+        const zipFile = new File([zipBlob], `${projectName}.zip`, { type: "application/zip" });
+
+        await uploadZip(sessionId, projectName, zipFile);
+    }
+
+    setIsUploading(false);
+};
+
 
   useEffect(() => {
     setNodes((nds) => 
@@ -115,7 +145,7 @@ export default function App() {
         id: `${nodeId}`,
         position: { x: 300, y: Math.max(...leafNodes.map(n => n.position.y)) + 100 },
         data: {
-          label: project_name,
+          label: projectName,
           type: "noop",
           workingDir: "",
           command: "",
@@ -167,16 +197,7 @@ export default function App() {
     setSelectedNode((prev) => ({ ...prev, data: { ...prev.data, [field]: value } }));
   };
 
-  const generateZip = () => {
-    const zip = new JSZip();
-    nodes.forEach((node) => {
-      const content = `type=${node.data.type}\nworking.dir=${node.data.workingDir}\ncommand=${node.data.command}\ndependencies=${node.data.dependencies.join(', ')}`;
-      zip.file(`${node.data.label}.job`, content);
-    });
-    zip.generateAsync({ type: 'blob' }).then((content) => {
-      saveAs(content, 'jobs.zip');
-    });
-  };
+
  
   return (
     <div>
@@ -221,8 +242,14 @@ export default function App() {
           </div>
         )}
         <div className='download-section'>
-          <button onClick={generateZip} className='download-button' >Generate ZIP</button>
-          <button className='download-button' >Create on Azkaban</button>
+          <button onClick={() => generateZip(nodes)} className='download-button' >Generate ZIP</button>
+          <button
+            onClick={handleProjectCreate}
+            disabled={isUploading || !projectName}
+            className='download-button'
+          >
+            {isUploading ? 'Uploading...' : 'Create & Upload'}
+          </button>          
         </div>
       </div>
       
