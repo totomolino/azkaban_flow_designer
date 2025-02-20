@@ -20,7 +20,8 @@ export async function authenticate() {
             password
         }), {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded' // Set the correct content type
+                'Content-Type': 'application/x-www-form-urlencoded', // Set the correct content type,
+                'Access-Control-Allow-Origin': "*"
             },
             validateStatus: false
         });
