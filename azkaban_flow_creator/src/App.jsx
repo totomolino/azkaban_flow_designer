@@ -16,9 +16,9 @@ import './index.css'
 
 const project_name = 'test_project'
 const initialNodes = [
-  { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${project_name}`, type: '', workingDir: '', command: '', dependencies: [] } },
+  { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${project_name}`, type: 'noop', workingDir: '', command: '', retries: '', dependencies: [] } },
 ];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+const initialEdges = [];
  
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -61,7 +61,7 @@ export default function App() {
             type: "command",
             workingDir: "/usr/lib/ZDH/hub/spark_engine/",
             command: `python3 /usr/lib/ZDH/hub/spark_engine/ZDHDataTransferExecutor.py BI_LatAm ${tableName}`,
-            retries: 5,
+            retries: 0,
             dependencies: lastNode ? [lastNode.data.label] : []
           }
         };
@@ -74,7 +74,7 @@ export default function App() {
             type: "command",
             workingDir: "/usr/lib/ZDH/hub/spark_engine/",
             command: `python3 /usr/lib/ZDH/hub/spark_engine/ZDHLandingExecutor.py BI_LatAm ${tableName}`,
-            retries: 5,
+            retries: 0,
             dependencies: [dtNode.data.label]
           }
         };
@@ -91,11 +91,11 @@ export default function App() {
           id: `${nodeId}`,
           position: { x: 300, y: lastNode ? lastNode.position.y + 100 : 100 },
           data: {
-            label: `${tableName}_BRE`,
+            label: `${tableName}`,
             type: "command",
             workingDir: "/usr/lib/ZDH/hub/spark_engine/",
-            command: `python3 /usr/lib/ZDH/hub/spark_engine/BREExecutor.py BI_LatAm ${tableName}`,
-            retries: 5,
+            command: `python3 /usr/lib/ZDH/hub/spark_engine/ZDHBREWorkflowExecutor.py BI_LatAm ${tableName}`,
+            retries: 0,
             dependencies: lastNode ? [lastNode.data.label] : []
           }
         };
@@ -103,6 +103,35 @@ export default function App() {
         setNodes((nds) => [...nds, breNode]);
         setNodeId((id) => id + 1);
       }
+    } else if (type === "End") {
+      const leafNodes = nodes.filter(n => !edges.some(e => e.source === n.id));
+  
+      if (leafNodes.length === 0) {
+        alert("No leaf nodes found!");
+        return;
+      }
+  
+      const endNode = {
+        id: `${nodeId}`,
+        position: { x: 300, y: Math.max(...leafNodes.map(n => n.position.y)) + 100 },
+        data: {
+          label: project_name,
+          type: "noop",
+          workingDir: "",
+          command: "",
+          dependencies: leafNodes.map(n => n.data.label)
+        }
+      };
+  
+      const newEdges = leafNodes.map(n => ({
+        id: `e${n.id}-${nodeId}`,
+        source: n.id,
+        target: `${nodeId}`
+      }));
+  
+      setNodes((nds) => [...nds, endNode]);
+      setEdges((eds) => [...eds, ...newEdges]);
+      setNodeId((id) => id + 1);
     } else {
       const lastNode = nodes.length ? nodes[nodes.length - 1] : null;
       const newNode = {
@@ -120,7 +149,7 @@ export default function App() {
       setNodes((nds) => [...nds, newNode]);
       setNodeId((id) => id + 1);
     }
-  };
+  };  
   
 
   const onNodeClick = (event, node) => {
@@ -159,6 +188,7 @@ export default function App() {
         <button onClick={() => addNode("LDG")} className="add-button">Add LDG</button>
         <button onClick={() => addNode("BRE")} className="add-button">Add BRE</button>
         <button onClick={() => addNode("Custom")} className="add-button">Add Custom</button>
+        <button onClick={() => addNode("End")} className="add-button">Add End</button>
       </div>
       <div className='flow-map' >
         <ReactFlow
@@ -178,9 +208,10 @@ export default function App() {
         {selectedNode ? (
           <div className='node-popup'>
             <h3>{selectedNode.data.label}</h3>
-            <label>Type: <input type="text" value={selectedNode.data.type} onChange={(e) => handleInputChange('type', e.target.value)} /></label><br />
-            <label>Working Directory: <input type="text" value={selectedNode.data.workingDir} onChange={(e) => handleInputChange('workingDir', e.target.value)} /></label><br />
-            <label>Command: <input type="text" value={selectedNode.data.command} onChange={(e) => handleInputChange('command', e.target.value)} /></label><br />
+            <label>Type: <br /><input type="text" className='node-input' value={selectedNode.data.type} onChange={(e) => handleInputChange('type', e.target.value)} /></label><br />
+            <br /><label>Working Directory: <br /><input type="text" className='node-input' value={selectedNode.data.workingDir} onChange={(e) => handleInputChange('workingDir', e.target.value)} /></label><br />
+            <br /><label>Command: <br /><textarea type="text" className='node-input' value={selectedNode.data.command} onChange={(e) => handleInputChange('command', e.target.value)} /></label><br />
+            <br /><label>Retries: <br /><input type="text" className='node-input' value={selectedNode.data.retries} onChange={(e) => handleInputChange('retries', e.target.value)} /></label><br />
             <p><strong>Dependencies:</strong> {selectedNode.data.dependencies.join(', ')}</p>
             <button onClick={closePopup} className='popup-button'>Close</button>
           </div>
