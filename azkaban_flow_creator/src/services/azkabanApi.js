@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = `http://${import.meta.env.REACT_APP_SERVER_IP}:${import.meta.env.REACT_APP_AZKABAN_PORT}`;
+const baseURL = `http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_AZKABAN_PORT}`;
 
 export async function authenticate() {
     const username = window.prompt("Enter your Azkaban username:");
