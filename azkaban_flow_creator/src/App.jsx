@@ -13,10 +13,10 @@ import { saveAs } from 'file-saver';
  
 import '@xyflow/react/dist/style.css';
 import './index.css'
- 
+
+const project_name = 'test_project'
 const initialNodes = [
-  { id: '1', position: { x: 300, y: 200 }, data: { label: 'Job 1', type: '', workingDir: '', command: '', dependencies: [] } },
-  { id: '2', position: { x: 300, y: 300 }, data: { label: 'Job 2', type: '', workingDir: '', command: '', dependencies: ['Job 1'] } },
+  { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${test_project}`, type: '', workingDir: '', command: '', dependencies: [] } },
 ];
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
  
