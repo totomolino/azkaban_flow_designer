@@ -97,8 +97,9 @@ export default function App() {
     </header>
     <div className='main'>
       <div className= 'add-buttons-section'>
-        <button onClick={addNode} className='add-button'>Add Node</button>
-        <button onClick={addNode} className='add-button'>Add Node</button>
+        <button onClick={addNode} className='add-button'>Add LDG</button>
+        <button onClick={addNode} className='add-button'>Add BRE</button>
+        <button onClick={addNode} className='add-button'>Add Custom</button>
       </div>
       <div className='flow-map' >
         <ReactFlow
@@ -114,8 +115,8 @@ export default function App() {
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
       </div>
-      <div className= 'edit-section'>
-        {selectedNode && (
+      <div className='edit-section'>
+        {selectedNode ? (
           <div className='node-popup'>
             <h3>{selectedNode.data.label}</h3>
             <label>Type: <input type="text" value={selectedNode.data.type} onChange={(e) => handleInputChange('type', e.target.value)} /></label><br />
@@ -124,10 +125,11 @@ export default function App() {
             <p><strong>Dependencies:</strong> {selectedNode.data.dependencies.join(', ')}</p>
             <button onClick={closePopup} className='popup-button'>Close</button>
           </div>
-        )}
+        ) : (
           <div className='node-popup'>
             <h3>Please select a node to edit it</h3>
           </div>
+        )}
         <div className='download-section'>
           <button onClick={generateZip} className='download-button' >Generate ZIP</button>
           <button className='download-button' >Create on Azkaban</button>
