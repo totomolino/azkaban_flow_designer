@@ -125,7 +125,13 @@ export default function App() {
             <button onClick={closePopup} className='popup-button'>Close</button>
           </div>
         )}
-        <button onClick={generateZip} className='download-button' >Generate ZIP</button>
+          <div className='node-popup'>
+            <h3>Please select a node to edit it</h3>
+          </div>
+        <div className='download-section'>
+          <button onClick={generateZip} className='download-button' >Generate ZIP</button>
+          <button className='download-button' >Create on Azkaban</button>
+        </div>
       </div>
       
     </div>

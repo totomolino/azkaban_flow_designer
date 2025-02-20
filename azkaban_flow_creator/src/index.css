@@ -4,7 +4,6 @@
     align-items: center;
     padding: 20px 20px;
     background-color: #f8f9fa; /* Optional: Adjust background color */
-    position: fixed;
     top: 0;
     left: 0;
     z-index: 1000; /* Keeps it above other content */
@@ -33,12 +32,10 @@
 }
 
 .main{
-    position: fixed;
     display: flex;
     bottom: 2vh;
-    left: 50%;
-    transform: translateX(-50%);
     width: 100%;
+    padding-top: 3vh;
 }
 
 .add-buttons-section{
@@ -51,16 +48,12 @@
 .edit-section{
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     padding: 10px;
-    align-self: stretch;
     justify-content: space-between;
 }
 
 .node-popup{
-    position: relative;
-    top:20%;
-    left:50%;
-    transform: translate(-50%,-20%);
     padding: 20px;
     background: white;
     border-radius: 10px;
@@ -72,10 +65,16 @@
     padding: 8px 16px;
     font-size: 16px;
 }
+
+.download-section{
+    display: flex;
+    justify-content: center;
+}
 .download-button {
     margin-bottom: 10px;
     padding: 8px 16px;
     font-size: 16px;
+    margin-left: 1vw;
 }
 
 .popup-button{
