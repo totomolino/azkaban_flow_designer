@@ -58,7 +58,6 @@ export async function uploadZip(sessionId, projectName, zipFile) {
 
     try {
         const response = await axios.post(`${proxyURL}/uploadZip`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
             validateStatus: false
         });
 
@@ -71,3 +70,4 @@ export async function uploadZip(sessionId, projectName, zipFile) {
         console.error(`Error while uploading zip file:`, error);
     }
 }
+
