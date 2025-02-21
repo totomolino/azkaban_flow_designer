@@ -19,6 +19,7 @@ import { generateZipAzkaban, generateZip } from './services/zipUtils';
  
 export default function App() {
   const [projectName, setProjectName] = useState('test_project');
+  const [tempProjectName, setTempProjectName] = useState(projectName);
 
   const initialNodes = [
     { id: '1', position: { x: 300, y: 200 }, data: { label: `Start_${projectName}`, type: 'noop', workingDir: '', command: '', retries: '', dependencies: [] } },
@@ -67,6 +68,41 @@ export default function App() {
       }))
     );
   }, [edges, setNodes]);
+
+const updateProjectName = (newProjectName) => {
+  setNodes((nds) =>
+    nds.map((node) => {
+      // Use the external projectName variable to get the current project name
+      const currentProjectName = projectName; // Assuming projectName holds the current project name
+
+      // Update Start and End nodes
+      let updatedLabel = node.data.label;
+      if (node.data.label.startsWith("Start_")) {
+        updatedLabel = `Start_${newProjectName}`;
+      } else if (node.data.label.startsWith("End_")) {
+        updatedLabel = `End_${newProjectName}`;
+      }
+
+      // Update dependencies where the current project name appears
+      const updatedDependencies = node.data.dependencies.map((dep) =>
+        dep.replace(currentProjectName, newProjectName)
+      );
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          label: updatedLabel,
+          dependencies: updatedDependencies,
+        },
+      };
+    })
+  );
+
+  setProjectName(newProjectName); // Update the state with the new project name
+};
+
+
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -143,7 +179,7 @@ export default function App() {
         id: `${nodeId}`,
         position: { x: 300, y: Math.max(...leafNodes.map(n => n.position.y)) + 100 },
         data: {
-          label: projectName,
+          label: `End_${projectName}`,
           type: "noop",
           workingDir: "",
           command: "",
@@ -204,6 +240,13 @@ export default function App() {
     </header>
     <div className='main'>
       <div className="add-buttons-section">
+        <input
+          type="text"
+          value={tempProjectName}
+          onChange={(e) => setTempProjectName(e.target.value)}
+          className="mt-2 p-2 border rounded w-full"
+        />
+        <button onClick={() => updateProjectName(tempProjectName)}>Confirm</button> <br />
         <button onClick={() => addNode("LDG")} className="add-button">Add LDG</button>
         <button onClick={() => addNode("BRE")} className="add-button">Add BRE</button>
         <button onClick={() => addNode("Custom")} className="add-button">Add Custom</button>
