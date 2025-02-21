@@ -2,11 +2,13 @@
 require('dotenv').config();
 const FormData = require('form-data');
 const express = require('express');
+const multer = require('multer');
 const axios = require('axios');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
+const upload = multer({ dest: 'uploads/' }); // Stores files in 'uploads/' directory
 const PORT = 4000; // You can change this port if needed
 
 app.use(cors());
@@ -47,11 +49,22 @@ app.post('/api/createProject', async (req, res) => {
 });
 
 app.post('/api/uploadZip', async (req, res) => {
+
+    console.log(req.file);  // Log to check if file is received
+    console.log(req.body);  // Log request body (sessionId, projectName)
+
+    if (!req.file) {
+        return res.status(400).json({ error: 'File not received' });
+    }
+
     const formData = new FormData();
     formData.append('session.id', req.body.sessionId);
     formData.append('project', req.body.projectName);
     formData.append('ajax', 'upload');
-    formData.append('file', req.files.zipFile, `${req.body.projectName}.zip`); // You'll need to handle file uploads
+
+    // Read the uploaded file and append to formData
+    const fileStream = fs.createReadStream(req.file.path);
+    formData.append('file', fileStream, req.file.originalname);
 
     try {
         const response = await axios.post(`${baseURL}/manager`, formData, {
