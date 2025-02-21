@@ -6,6 +6,7 @@ const multer = require('multer');
 const axios = require('axios');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const fs = require('fs'); // Add this line to import the fs module
 
 const app = express();
 const upload = multer({ dest: 'uploads/' }); // Stores files in 'uploads/' directory
@@ -48,8 +49,7 @@ app.post('/api/createProject', async (req, res) => {
     }
 });
 
-app.post('/api/uploadZip', async (req, res) => {
-
+app.post('/api/uploadZip', upload.single('zipFile'), async (req, res) => {
     console.log(req.file);  // Log to check if file is received
     console.log(req.body);  // Log request body (sessionId, projectName)
 
@@ -64,19 +64,30 @@ app.post('/api/uploadZip', async (req, res) => {
 
     // Read the uploaded file and append to formData
     const fileStream = fs.createReadStream(req.file.path);
-    formData.append('file', fileStream, req.file.originalname);
+    formData.append('file', fileStream, { filename: req.file.originalname, contentType: 'application/zip' }); // Specify filename and content type
 
     try {
         const response = await axios.post(`${baseURL}/manager`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            validateStatus: false
+            headers: {
+                ...formData.getHeaders(), // Use formData's headers for multipart/form-data
+                validateStatus: false,
+            },
         });
-        res.status(response.status).json(response.data);
+
+        // Check the response and return accordingly
+        if (response.status === 200) {
+            console.log(`Zip file uploaded successfully to ${req.body.projectName}.`);
+            res.status(200).json(response.data);
+        } else {
+            console.error(`Failed to upload zip file to ${req.body.projectName}:`, response.data);
+            res.status(response.status).json({ error: `Failed to upload zip file: ${response.data}` });
+        }
     } catch (error) {
         console.error(`Error while uploading zip file:`, error);
         res.status(500).json({ error: 'Error uploading zip file' });
     }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Proxy server running on http://localhost:${PORT}`);
