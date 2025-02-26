@@ -197,12 +197,14 @@ const updateProjectName = (newProjectName) => {
       setEdges((eds) => [...eds, ...newEdges]);
       setNodeId((id) => id + 1);
     } else {
+      const jobName = prompt("Enter the job name:");
+      console.log(jobName);
       const lastNode = nodes.length ? nodes[nodes.length - 1] : null;
       const newNode = {
         id: `${nodeId}`,
         position: { x: 300, y: lastNode ? lastNode.position.y + 100 : 100 },
         data: {
-          label: `Job ${nodeId}`,
+          label: jobName !== '' ? jobName : `Job ${nodeId}`,
           type: "",
           workingDir: "",
           command: "",
@@ -240,17 +242,22 @@ const updateProjectName = (newProjectName) => {
     </header>
     <div className='main'>
       <div className="add-buttons-section">
-        <input
-          type="text"
-          value={tempProjectName}
-          onChange={(e) => setTempProjectName(e.target.value)}
-          className="mt-2 p-2 border rounded w-full"
-        />
-        <button onClick={() => updateProjectName(tempProjectName)}>Confirm</button> <br />
-        <button onClick={() => addNode("LDG")} className="add-button">Add LDG</button>
-        <button onClick={() => addNode("BRE")} className="add-button">Add BRE</button>
-        <button onClick={() => addNode("Custom")} className="add-button">Add Custom</button>
-        <button onClick={() => addNode("End")} className="add-button">Add End</button>
+        <h3>Project name</h3>
+        <div className = 'project-name'>
+          <input
+            type="text"
+            value={tempProjectName}
+            onChange={(e) => setTempProjectName(e.target.value)}
+            className="project-name-input"
+          />
+          <button onClick={() => updateProjectName(tempProjectName)}>Confirm</button>
+        </div>
+        <div className='add-buttons'>
+          <button onClick={() => addNode("LDG")} className="add-button">Add LDG</button>
+          <button onClick={() => addNode("BRE")} className="add-button">Add BRE</button>
+          <button onClick={() => addNode("Custom")} className="add-button">Add Custom</button>
+          <button onClick={() => addNode("End")} className="add-button">Add End</button>
+        </div>
       </div>
       <div className='flow-map' >
         <ReactFlow
@@ -283,7 +290,7 @@ const updateProjectName = (newProjectName) => {
           </div>
         )}
         <div className='download-section'>
-          <button onClick={() => generateZip(nodes)} className='download-button' >Generate ZIP</button>
+          <button onClick={() => generateZip(nodes, projectName)} className='download-button' >Generate ZIP</button>
           <button
             onClick={handleProjectCreate}
             disabled={isUploading || !projectName}

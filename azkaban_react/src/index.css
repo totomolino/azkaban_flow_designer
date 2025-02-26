@@ -44,6 +44,16 @@
     width: 10vw;
 }
 
+.add-buttons{
+    display: flex;
+    flex-direction: column;
+    width: 10vw;
+}
+
+.react-flow__node{
+    width: auto !important;
+}
+
 .edit-section{
     display: flex;
     flex-direction: column;
@@ -54,6 +64,24 @@
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(242,242,242,1);
     margin-left: 0.5vw;
+}
+
+.project-name{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10%;
+    height: 8vh;
+}
+
+
+.project-name-input{
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    width: 100%;
 }
 
 .node-popup{
