@@ -1,4 +1,5 @@
 import axios from 'axios';
+const os = require('os');
 
 function getLocalIPAddress() {
     const interfaces = os.networkInterfaces();
