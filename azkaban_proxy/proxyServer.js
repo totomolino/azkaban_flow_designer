@@ -89,7 +89,17 @@ app.post('/api/uploadZip', upload.single('zipFile'), async (req, res) => {
         res.status(500).json({ error: 'Error uploading zip file' });
     }
 });
-
+function getLocalIPAddress() {
+    const interfaces = os.networkInterfaces();
+    for (const iface of Object.values(interfaces)) {
+        for (const config of iface) {
+            if (config.family === 'IPv4' && !config.internal) {
+                return config.address;
+            }
+        }
+    }
+    return 'localhost'; // Fallback
+}
 
 function writeEnvForReact(ipAddress, port) {
     const envPath = path.resolve(__dirname, '../azkaban_react/.env');
