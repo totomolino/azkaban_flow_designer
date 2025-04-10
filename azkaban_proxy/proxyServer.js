@@ -8,6 +8,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs'); // Add this line to import the fs module
 const os = require('os');
+const path = require('path');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' }); // Stores files in 'uploads/' directory
