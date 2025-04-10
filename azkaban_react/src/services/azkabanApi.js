@@ -1,19 +1,9 @@
 import axios from 'axios';
-import os from 'os';
 
-function getLocalIPAddress() {
-    const interfaces = os.networkInterfaces();
-    for (const iface of Object.values(interfaces)) {
-        for (const config of iface) {
-            if (config.family === 'IPv4' && !config.internal) {
-                return config.address;
-            }
-        }
-    }
-    return 'localhost'; // Fallback
-}
+const serverIP = process.env.REACT_APP_SERVER_IP;
+const serverPort = process.env.REACT_APP_SERVER_PORT;
 
-const proxyURL = `http://${getLocalIPAddress()}:4000/api`; // Proxy server URL
+const proxyURL = `http://${serverIP}:${serverPort}/api`;
 
 console.log("Server IP is ", proxyURL);
 
