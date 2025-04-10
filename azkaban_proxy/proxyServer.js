@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // For parsing application/x
 app.use(bodyParser.json()); // For parsing application/json
 
 // const baseURL = `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_AZKABAN_PORT}`;
-const baseURL = "http://localhost:3000";
+const baseURL = "http://10.232.75.29:8081";
 
 app.post('/api/authenticate', async (req, res) => {
     try {
