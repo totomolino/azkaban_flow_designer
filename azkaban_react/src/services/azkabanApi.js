@@ -1,6 +1,20 @@
 import axios from 'axios';
 
-const proxyURL = 'http://localhost:4000/api'; // Proxy server URL
+function getLocalIPAddress() {
+    const interfaces = os.networkInterfaces();
+    for (const iface of Object.values(interfaces)) {
+        for (const config of iface) {
+            if (config.family === 'IPv4' && !config.internal) {
+                return config.address;
+            }
+        }
+    }
+    return 'localhost'; // Fallback
+}
+
+const proxyURL = `http://${getLocalIPAddress()}:4000/api`; // Proxy server URL
+
+console.log("Server IP is ", proxyURL);
 
 export async function authenticate() {
     const username = window.prompt("Enter your Azkaban username:");
