@@ -7,6 +7,7 @@ const axios = require('axios');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs'); // Add this line to import the fs module
+const os = require('os');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' }); // Stores files in 'uploads/' directory
@@ -90,6 +91,23 @@ app.post('/api/uploadZip', upload.single('zipFile'), async (req, res) => {
 });
 
 
+function writeEnvForReact(ipAddress, port) {
+    const envPath = path.resolve(__dirname, '../azkaban_react/.env');
+
+    const envContent = 
+`REACT_APP_SERVER_IP=${ipAddress}
+REACT_APP_SERVER_PORT=${port}`;
+
+    try {
+        fs.writeFileSync(envPath, envContent, 'utf8');
+        console.log(`✅ Wrote to .env:\n${envContent}`);
+    } catch (err) {
+        console.error(`❌ Failed to write .env file:`, err);
+    }
+}
+
 app.listen(PORT, () => {
-    console.log(`Proxy server running on http://localhost:${PORT}`);
+    const ipAddress = getLocalIPAddress();
+    writeEnvForReact(ipAddress, PORT);
+    console.log(`🚀 Proxy server running on http://${ipAddress}:${PORT}`);
 });
