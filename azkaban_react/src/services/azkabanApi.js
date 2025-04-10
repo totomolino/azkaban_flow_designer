@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const proxyURL = 'http://10.232.75.44:4000/api'; // Proxy server URL
+const proxyURL = 'http://localhost:4000/api'; // Proxy server URL
 
 export async function authenticate() {
     const username = window.prompt("Enter your Azkaban username:");
