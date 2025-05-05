@@ -29,7 +29,7 @@ cd azkaban_proxy
 npm install
 
 echo "Starting azkaban_proxy (Node.js backend)..."
-nohup node app.js > proxy.log 2>&1 &
+nohup node proxyServer.js > proxy.log 2>&1 &
 
 # Step 5: Run frontend (azkaban_react)
 echo "Setting up azkaban_react..."
