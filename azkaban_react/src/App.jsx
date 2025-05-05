@@ -67,7 +67,7 @@ export default function App() {
         },
       }))
     );
-  }, [edges, setNodes, nodes]);
+  }, [edges, setNodes]);
 
 const updateProjectName = (newProjectName) => {
   setNodes((nds) =>
